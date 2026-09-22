@@ -1,0 +1,1102 @@
+batch: calibration
+description: Synthetic ShopFlow support tickets (90 cases, seed=20260921) with known-correct department
+  labels (billing/technical/shipping), for bucketing Jev's reported confidence against empirical accuracy.
+  Regenerate with generate_calibration.py for an identical file.
+cases:
+- id: technical_03_2
+  state: We're getting rate-limited even though we're well under the documented request quota.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: &id001
+        billing: Payment, subscription, invoicing, or refund issues
+        technical: Bugs, integration failures, or platform errors
+        shipping: Order fulfillment, carrier, or delivery problems
+  expected:
+    department: technical
+- id: billing_03_1
+  state: I want to downgrade from the Growth plan, but I'm still being billed at the higher rate.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_03_0
+  state: Can you tell me why 10 orders from last Friday didn't generate shipping labels automatically?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_06_0
+  state: Do you offer annual billing instead of monthly? I'd like to switch my Starter plan over.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_09_1
+  state: 'Why does the platform show ''out for delivery'' for order #47932, which was cancelled 21 days
+    ago?'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_05_0
+  state: I canceled my subscription 21 days ago but was still charged $19 yesterday.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_09_2
+  state: 'Why does the platform show ''out for delivery'' for order #29581, which was cancelled 10 days
+    ago?'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_00_0
+  state: The API keeps returning a 504 error whenever I try to sync inventory for more than 7 SKUs.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_05_0
+  state: Order statuses aren't syncing back to our ERP through the integration since Tuesday.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_05_1
+  state: Order statuses aren't syncing back to our ERP through the integration since Monday.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_01_0
+  state: Several customers are asking why their tracking numbers show no updates since this week.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_05_2
+  state: Our default carrier rates suddenly doubled overnight since yesterday morning, did something change
+    on your end?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_06_2
+  state: Do you offer annual billing instead of monthly? I'd like to switch my Pro plan over.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_05_0
+  state: Our default carrier rates suddenly doubled overnight since Monday, did something change on your
+    end?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_09_0
+  state: Product images uploaded via the API aren't showing up on the live storefront for the Starter
+    plan.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_05_1
+  state: I canceled my subscription 10 days ago but was still charged $149 yesterday.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_03_0
+  state: I want to downgrade from the Pro plan, but I'm still being billed at the higher rate.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_08_0
+  state: The OAuth token refresh is failing intermittently, about 1 in 7 requests.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_04_0
+  state: 'A customer''s package for order #53565 was marked delivered but they say it never arrived.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_07_2
+  state: We need to bulk-reprint shipping labels for 3 orders after a printer jam this morning.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_06_1
+  state: Can you tell me why the sandbox environment returns different data than production for the same
+    query?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_09_0
+  state: 'Why does the platform show ''out for delivery'' for order #97458, which was cancelled 10 days
+    ago?'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_02_1
+  state: We printed the wrong shipping label size and now packages are getting rejected by the carrier.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_00_2
+  state: The API keeps returning a 502 error whenever I try to sync inventory for more than 3 SKUs.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_06_0
+  state: Can you tell me why the sandbox environment returns different data than production for the same
+    query?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_03_1
+  state: We're getting rate-limited even though we're well under the documented request quota.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_06_2
+  state: Can you tell me why the sandbox environment returns different data than production for the same
+    query?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_09_0
+  state: My payment failed but you still show my account as past due even though I already fixed my card
+    info.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_00_1
+  state: I was charged twice for my Pro subscription this month, the extra $19 charge needs to be refunded.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_04_1
+  state: Your invoice from last Friday has the wrong tax amount listed - can someone correct it?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_05_2
+  state: I canceled my subscription 2 days ago but was still charged $99 yesterday.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_00_0
+  state: 'Order #60767 has been stuck in ''label created'' status for 14 days and hasn''t moved.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_04_2
+  state: 'A customer''s package for order #86054 was marked delivered but they say it never arrived.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_01_2
+  state: 'Can you explain why my invoice for order #33945 shows a $19 charge I don''t recognize?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_08_2
+  state: 'I need a copy of my receipt for order #80022 for expense reporting, where can I download it?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_02_0
+  state: Our storefront widget throws a blank screen in Safari but works fine in Chrome.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_09_2
+  state: My payment failed but you still show my account as past due even though I already fixed my card
+    info.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_02_2
+  state: My card on file expired and now I can't access my account, how do I update my payment method?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_01_1
+  state: 'Can you explain why my invoice for order #66865 shows a $99 charge I don''t recognize?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_03_1
+  state: Can you tell me why 5 orders from Tuesday didn't generate shipping labels automatically?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_01_1
+  state: Several customers are asking why their tracking numbers show no updates since this week.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_04_1
+  state: 'A customer''s package for order #98985 was marked delivered but they say it never arrived.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_04_2
+  state: The bulk import tool silently fails on CSVs larger than 3MB with no error message.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_07_1
+  state: The proration on my upgrade to Scale doesn't add up, I think I was overcharged by about $29.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_02_1
+  state: Our storefront widget throws a blank screen in Safari but works fine in Chrome.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_07_1
+  state: We need to bulk-reprint shipping labels for 10 orders after a printer jam this morning.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_00_2
+  state: I was charged twice for my Starter subscription this month, the extra $49 charge needs to be
+    refunded.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_02_0
+  state: We printed the wrong shipping label size and now packages are getting rejected by the carrier.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_08_1
+  state: 'I need a copy of my receipt for order #97409 for expense reporting, where can I download it?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_09_1
+  state: Product images uploaded via the API aren't showing up on the live storefront for the Growth plan.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_01_0
+  state: 'Can you explain why my invoice for order #70908 shows a $29 charge I don''t recognize?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_02_0
+  state: My card on file expired and now I can't access my account, how do I update my payment method?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_08_2
+  state: The OAuth token refresh is failing intermittently, about 1 in 10 requests.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_02_2
+  state: Our storefront widget throws a blank screen in Safari but works fine in Chrome.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_06_0
+  state: International orders aren't calculating customs fees correctly anymore as of yesterday morning.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_08_2
+  state: 'A shipment for order #81048 got returned to sender and I don''t know how to process the refund.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_04_0
+  state: The bulk import tool silently fails on CSVs larger than 10MB with no error message.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_07_0
+  state: Our checkout page has been throwing a JavaScript error since your platform update on this week.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_06_1
+  state: International orders aren't calculating customs fees correctly anymore as of yesterday morning.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_09_1
+  state: My payment failed but you still show my account as past due even though I already fixed my card
+    info.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_00_0
+  state: I was charged twice for my Growth subscription this month, the extra $12 charge needs to be refunded.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_09_2
+  state: Product images uploaded via the API aren't showing up on the live storefront for the Pro plan.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_04_1
+  state: The bulk import tool silently fails on CSVs larger than 3MB with no error message.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_03_2
+  state: I want to downgrade from the Scale plan, but I'm still being billed at the higher rate.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_02_1
+  state: My card on file expired and now I can't access my account, how do I update my payment method?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_00_1
+  state: The API keeps returning a 502 error whenever I try to sync inventory for more than 14 SKUs.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_07_0
+  state: The proration on my upgrade to Starter doesn't add up, I think I was overcharged by about $49.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_01_2
+  state: Webhooks stopped firing after I regenerated my API key 3 days ago, is there a known issue?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_07_2
+  state: Our checkout page has been throwing a JavaScript error since your platform update on Tuesday.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_07_0
+  state: We need to bulk-reprint shipping labels for 3 orders after a printer jam this morning.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_07_1
+  state: Our checkout page has been throwing a JavaScript error since your platform update on this week.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_03_2
+  state: Can you tell me why 3 orders from Monday didn't generate shipping labels automatically?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_01_2
+  state: Several customers are asking why their tracking numbers show no updates since Tuesday.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_07_2
+  state: The proration on my upgrade to Pro doesn't add up, I think I was overcharged by about $49.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_08_0
+  state: 'A shipment for order #96257 got returned to sender and I don''t know how to process the refund.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_00_2
+  state: 'Order #84974 has been stuck in ''label created'' status for 10 days and hasn''t moved.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_02_2
+  state: We printed the wrong shipping label size and now packages are getting rejected by the carrier.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_04_0
+  state: Your invoice from this week has the wrong tax amount listed - can someone correct it?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_01_0
+  state: Webhooks stopped firing after I regenerated my API key 2 days ago, is there a known issue?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_03_0
+  state: We're getting rate-limited even though we're well under the documented request quota.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: billing_04_2
+  state: Your invoice from Monday has the wrong tax amount listed - can someone correct it?
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: shipping_05_1
+  state: Our default carrier rates suddenly doubled overnight since last Friday, did something change
+    on your end?
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: technical_01_1
+  state: Webhooks stopped firing after I regenerated my API key 10 days ago, is there a known issue?
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: shipping_08_1
+  state: 'A shipment for order #33389 got returned to sender and I don''t know how to process the refund.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_00_1
+  state: 'Order #43634 has been stuck in ''label created'' status for 5 days and hasn''t moved.'
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: shipping_06_2
+  state: International orders aren't calculating customs fees correctly anymore as of Monday.
+  tags:
+  - calibration
+  - shipping
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: shipping
+- id: billing_08_0
+  state: 'I need a copy of my receipt for order #76318 for expense reporting, where can I download it?'
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: billing_06_1
+  state: Do you offer annual billing instead of monthly? I'd like to switch my Growth plan over.
+  tags:
+  - calibration
+  - billing
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: billing
+- id: technical_05_2
+  state: Order statuses aren't syncing back to our ERP through the integration since yesterday morning.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical
+- id: technical_08_1
+  state: The OAuth token refresh is failing intermittently, about 1 in 14 requests.
+  tags:
+  - calibration
+  - technical
+  questions:
+    department:
+      type: choice
+      instructions: Which team should handle this support ticket?
+      criteria: *id001
+  expected:
+    department: technical

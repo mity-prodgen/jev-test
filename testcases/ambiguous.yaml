@@ -1,0 +1,285 @@
+batch: ambiguous
+description: >
+  Support tickets deliberately written to be genuinely hard to classify on
+  tone (calm/frustrated/angry) and/or urgency (does this need same-day
+  handling?). No single correct answer is claimed for the "ambiguous"-tagged
+  cases - expected is left unset for those. A handful of "control" cases with
+  a clear, uncontroversial answer are included so the confidence/probability
+  spread on ambiguous cases can be compared against a clean-case baseline.
+
+cases:
+  # --- controls: unambiguous on both dimensions ---
+  - id: control_calm_not_urgent
+    state: >
+      Hi, whenever you get a chance, could you let me know if there's a way
+      to export my reports as CSV instead of PDF? No rush at all, just
+      curious for a future project.
+    tags: [control]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+    expected:
+      tone: calm
+      urgency: false
+
+  - id: control_angry_urgent
+    state: >
+      This is the THIRD time I'm emailing about this. Our checkout has been
+      completely broken for six hours and we are losing thousands of
+      dollars in sales every hour it stays down. Fix this immediately or
+      we're canceling our contract.
+    tags: [control]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+    expected:
+      tone: angry
+      urgency: true
+
+  - id: control_frustrated_moderate
+    state: >
+      This is the second time this month I've had to reach out about the
+      same billing glitch. It's frustrating that it keeps coming back, but
+      I know these things take time to fix properly.
+    tags: [control]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+    expected:
+      tone: frustrated
+      urgency: false
+
+  - id: control_calm_urgent
+    state: >
+      Our production payment webhook has been silent since this morning's
+      deploy - could someone confirm today whether this is a known issue on
+      your end? Happy to hop on a call if that's faster.
+    tags: [control]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+    expected:
+      tone: calm
+      urgency: true
+
+  # --- ambiguous: annoyed but not urgent ---
+  - id: annoyed_not_urgent_1
+    state: >
+      Honestly kind of annoying that this keeps happening, but it's not
+      like it's stopping me from using the product, so just flagging it
+      whenever someone has time.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: annoyed_not_urgent_2
+    state: >
+      Not a huge deal in the grand scheme of things, but I've noticed the
+      dashboard loads noticeably slower than it used to. Would be nice if
+      someone looked into it at some point.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: annoyed_not_urgent_3
+    state: >
+      I get that bugs happen, but this is the kind of thing that makes me
+      question the QA process. Not asking for a fire drill, just would like
+      it looked at eventually.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  # --- ambiguous: urgent but calm/measured ---
+  - id: urgent_but_calm_1
+    state: >
+      Wanted to flag that our sync job has been failing since last night.
+      It's not customer-facing yet, but if it's still broken by end of day
+      it will start affecting live orders, so a same-day look would help.
+    tags: [ambiguous, urgency_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: urgent_but_calm_2
+    state: >
+      Our compliance audit is tomorrow morning and we need the export
+      permissions report by end of day today. I understand this is short
+      notice on our end too, so no worries if it's genuinely not possible.
+    tags: [ambiguous, urgency_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  # --- ambiguous: tone split between frustrated and angry ---
+  - id: frustrated_or_angry_1
+    state: >
+      I'm honestly getting pretty fed up at this point. This is the second
+      outage this quarter and each time I'm told it "won't happen again."
+      I need more than reassurance this time.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: frustrated_or_angry_2
+    state: >
+      Look, I've been patient about this for weeks now and I'm running out
+      of patience. I'm not going to start yelling, but I need someone to
+      actually own this issue instead of passing me around support.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  # --- ambiguous: tone split between calm and frustrated ---
+  - id: calm_or_frustrated_1
+    state: >
+      No worries if this is expected behavior, but the totals on my export
+      don't match the dashboard numbers and it's the second report where
+      I've seen that mismatch.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: calm_or_frustrated_2
+    state: >
+      I want to like this feature, I really do, but every time I try to use
+      it something small is broken. I'll keep trying, just wanted you to
+      know it's been a bit of a rough experience so far.
+    tags: [ambiguous, tone_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  # --- ambiguous: soft deadline, urgency genuinely unclear ---
+  - id: soft_deadline_1
+    state: >
+      This has been going on for about two weeks now. Whenever you get a
+      chance is fine, but I did want to make sure it's actually on
+      someone's radar and not just sitting in a queue somewhere.
+    tags: [ambiguous, urgency_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: soft_deadline_2
+    state: >
+      We're planning to launch a big campaign sometime in the next couple
+      weeks and it would be great to have this sorted before then, but I
+      don't have an exact date locked in yet.
+    tags: [ambiguous, urgency_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  # --- ambiguous: both dimensions unclear at once ---
+  - id: both_ambiguous_1
+    state: >
+      This is the kind of thing that's been chipping away at my patience
+      for a while, not any one incident in particular. Might be worth a
+      conversation soon, though I don't think anything's on fire right now.
+    tags: [ambiguous, both_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"
+
+  - id: both_ambiguous_2
+    state: >
+      Not sure if I'm overreacting, but this is the kind of bug that makes
+      me nervous about trusting the numbers elsewhere in the product. Would
+      rather not wait too long to find out, but I also don't want to be
+      the person crying wolf.
+    tags: [ambiguous, both_ambiguous]
+    questions:
+      tone:
+        type: choice
+        instructions: "What is the customer's tone?"
+        criteria: {calm: null, frustrated: null, angry: null}
+      urgency:
+        type: noul
+        instructions: "Does this message need to be handled today rather than in the next few business days?"

@@ -1,0 +1,261 @@
+batch: off_menu
+description: >
+  Same 3-way department schema (billing/technical/shipping) for a fictional
+  e-commerce platform, "ShopFlow". Each off-menu state genuinely belongs to
+  none of the three departments. Every off-menu state appears twice: once
+  against the closed 3-option schema (no escape), and once against the same
+  schema plus an explicit "other" option (has escape) - this isolates
+  whether confidence alone signals the mismatch, or whether Jev only admits
+  it via an explicit escape hatch. A few on-menu control cases are included
+  so off-menu confidence/probabilities have a clean-case baseline to compare
+  against.
+
+cases:
+  # --- on-menu controls: clear, unambiguous fits for the 3-way schema ---
+  - id: control_billing
+    state: >
+      I was charged twice for my subscription this month, can you refund
+      the duplicate $49 charge?
+    tags: [control]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: billing
+
+  - id: control_technical
+    state: >
+      The API returns a 500 error every time I try to sync inventory for
+      more than 200 SKUs at once.
+    tags: [control]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: technical
+
+  - id: control_shipping
+    state: >
+      Several orders are stuck in "label created" status and haven't been
+      picked up by the carrier in 4 days, my customers are asking where
+      their packages are.
+    tags: [control]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: shipping
+
+  # --- off-menu: legal complaint ---
+  - id: legal_complaint_no_escape
+    state: &legal_complaint >
+      I am writing to formally notify you that we are pursuing legal action
+      against your company for breach of contract under section 4.2 of our
+      enterprise agreement. Please have your legal counsel contact ours
+      within 10 business days.
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: legal_complaint_has_escape
+    state: *legal_complaint
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
+
+  # --- off-menu: job application ---
+  - id: job_application_no_escape
+    state: &job_application >
+      Hi, I saw your company is hiring for a backend engineer role on your
+      careers page. I'd love to apply - is this email the right place to
+      send my resume, or is there an application form?
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: job_application_has_escape
+    state: *job_application
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
+
+  # --- off-menu: press/media inquiry ---
+  - id: press_inquiry_no_escape
+    state: &press_inquiry >
+      I'm a reporter working on a story about e-commerce infrastructure
+      startups. Would someone on your team, ideally the CEO, be available
+      for a 20-minute interview next week?
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: press_inquiry_has_escape
+    state: *press_inquiry
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
+
+  # --- off-menu: marketing spam ---
+  - id: spam_no_escape
+    state: &spam >
+      Boost your website traffic by 500%!! Our SEO agency has helped
+      thousands of stores rank #1 on Google. Reply now for a limited-time
+      discount on our growth package.
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: spam_has_escape
+    state: *spam
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
+
+  # --- off-menu: general goodwill message, no request at all ---
+  - id: goodwill_no_escape
+    state: &goodwill >
+      Just wanted to say happy holidays to the whole team - we've really
+      enjoyed working with your platform this year. Hope you all get some
+      well-deserved rest!
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: goodwill_has_escape
+    state: *goodwill
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
+
+  # --- off-menu: fully unrelated content (recipe) ---
+  - id: recipe_no_escape
+    state: &recipe >
+      Preheat the oven to 375F. In a large bowl, whisk together flour,
+      sugar, and baking soda. Fold in the melted butter and chocolate
+      chips, then bake for 10-12 minutes until golden.
+    tags: [off_menu, no_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+    expected:
+      department: null
+
+  - id: recipe_has_escape
+    state: *recipe
+    tags: [off_menu, has_escape]
+    questions:
+      department:
+        type: choice
+        instructions: "Which team should handle this support ticket?"
+        criteria:
+          billing: "Payment, subscription, invoicing, or refund issues"
+          technical: "Bugs, integration failures, or platform errors"
+          shipping: "Order fulfillment, carrier, or delivery problems"
+          other: "None of the above - not a billing, technical, or shipping issue"
+    expected:
+      department: other
