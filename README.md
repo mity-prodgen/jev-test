@@ -82,6 +82,8 @@ by a source passage, measures accuracy/calibration against human labels from
 [RAGTruth](https://github.com/ParticleMedia/RAGTruth) (MIT licensed), and compares it with an LLM judge
 (Claude Haiku 4.5 by default) on accuracy, cost, and latency.
 
+Background and results: [Can Jev Catch Hallucinations?](https://claude.ai/artifact/Lehk75tkp8MD4poixMJhaY).
+
 ```bash
 scripts/download_ragtruth.sh                    # fetch RAGTruth into data/ragtruth/ (gitignored)
 .venv/bin/python hallucination/build_sample.py   # stratified 600-case sample -> hallucination/results/
