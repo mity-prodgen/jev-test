@@ -92,7 +92,7 @@ scripts/download_ragtruth.sh                    # fetch RAGTruth into data/ragtr
 set -a && source .env && set +a
 .venv/bin/python hallucination/run_judge_batch.py            # dry-run: prints call/token/cost estimate, no API calls
 .venv/bin/python hallucination/run_judge_batch.py --live      # both judges, full 600 cases
-.venv/bin/python hallucination/analyze.py                     # accuracy/precision/recall, ECE, recalibration, cost -> CSV/JSON/PNG
+.venv/bin/python hallucination/analyze.py                     # accuracy/precision/recall, ECE, recalibration (300 random splits), cost -> CSV/JSON/PNG
 
 .venv/bin/python hallucination/consistency.py --live           # 50 cases x 20 reps: run-to-run spread near p=0.5
 ```
@@ -105,12 +105,12 @@ jev_harness/
   cache.py                content-addressed disk cache - both judges route every call through it
   llm_judge.py             LLM judge client (Anthropic by default; LLM_JUDGE_PROVIDER/_MODEL env vars)
   cost.py                  tiktoken-proxy token/cost estimation for --dry-run
-  calibration_analysis.py  ECE, isotonic recalibration, learning curve (builds on stats.py)
+  calibration_analysis.py  ECE, isotonic recalibration, learning curve, repeated-split summary (builds on stats.py)
 hallucination/
   build_sample.py    stratified RAGTruth sample (3 task types x hallucinated/clean x 100, seeded)
   error_types.py      heuristic error-type tagging (numeric/date, negation, wrong-entity, unsupported-detail)
   run_judge_batch.py   runs Jev + the LLM judge over the sample; --dry-run default, --live to spend money
-  analyze.py            accuracy/precision/recall, reliability diagrams, recalibration, cost/latency
+  analyze.py            accuracy/precision/recall, reliability diagrams, recalibration over repeated splits, cost/latency
   consistency.py         run-to-run consistency: repeated calls per case, spread vs. distance from p=0.5
   RESULTS.md              headline numbers (regenerated, not hand-edited)
 ```
