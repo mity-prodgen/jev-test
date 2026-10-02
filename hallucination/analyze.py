@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 from jev_harness.calibration_analysis import (
     expected_calibration_error,
     learning_curve,
+    repeated_split_summary,
     split_train_test,
 )
 from jev_harness.stats import calibration_buckets
@@ -37,6 +38,7 @@ RESULTS_MD = ROOT / "hallucination" / "RESULTS.md"
 
 RECAL_SEED = 20260929
 N_TRAIN = 400
+N_SPLITS = 300
 LEARNING_CURVE_SIZES = (50, 100, 200, 400)
 
 
@@ -151,21 +153,52 @@ def plot_per_type_accuracy(jev_breakdown: dict, llm_breakdown: dict, path: Path)
     plt.close(fig)
 
 
-def plot_learning_curve(curve: list[dict[str, Any]], path: Path) -> None:
+def plot_learning_curve(repeated: list[dict[str, Any]], path: Path) -> None:
     fig, ax = plt.subplots(figsize=(7, 5))
-    ns = [c["n_train"] for c in curve]
-    before = curve[0]["ece_before"] if curve else None
-    after_vals = [c["ece_after"] for c in curve]
-    ax.plot(ns, after_vals, marker="o", color="#2a78d6", label="ECE after recalibration")
+    ns = [r["n_train"] for r in repeated]
+    after_vals = [r["mean_ece_after"] for r in repeated]
+    before = repeated[0]["mean_ece_before"] if repeated else None
+    ax.plot(ns, after_vals, marker="o", color="#2a78d6", label="mean ECE after recalibration")
+    for r in repeated:
+        ax.annotate(
+            f"worse in {r['frac_worse']:.0%}",
+            (r["n_train"], r["mean_ece_after"]),
+            fontsize=8,
+            xytext=(4, 6),
+            textcoords="offset points",
+        )
     if before is not None:
-        ax.axhline(before, linestyle="--", color="gray", label="ECE before (no recalibration)")
+        ax.axhline(before, linestyle="--", color="gray", label="mean ECE before (no recalibration)")
+    n_splits = repeated[0]["n_splits"] if repeated else 0
     ax.set_xlabel("Training labels used")
     ax.set_ylabel("Expected Calibration Error")
-    ax.set_title("Recalibration: ECE vs. training set size (Jev)")
+    ax.set_title(f"Recalibration: ECE vs. training set size (Jev, mean of {n_splits} splits)")
     ax.legend()
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
+
+
+def _recal_lines(recal: dict[str, Any] | None) -> list[str]:
+    if not recal:
+        return ["- recalibration: n/a"]
+    lines = [
+        f"- One split ({N_TRAIN}-case train / {recal['test_n']}-case test, seed {RECAL_SEED}): "
+        f"ECE {recal['ece_before']:.4f} -> {recal['ece_after']:.4f}. "
+        "One split is noisy; see the repeated-split table below.",
+        "",
+        f"Isotonic recalibration over {recal['repeated'][0]['n_splits']} random "
+        f"{N_TRAIN}/{recal['test_n']} splits (mean ECE on the test part):",
+        "",
+        "| Training labels | ECE before | ECE after | Mean change | Worse in |",
+        "|---|---|---|---|---|",
+    ]
+    for r in recal["repeated"]:
+        lines.append(
+            f"| {r['n_train']} | {r['mean_ece_before']:.4f} | {r['mean_ece_after']:.4f} | "
+            f"{r['mean_diff']:+.4f} | {r['frac_worse']:.0%} of splits |"
+        )
+    return lines
 
 
 def write_results_md(summary: dict[str, Any]) -> None:
@@ -189,10 +222,7 @@ def write_results_md(summary: dict[str, Any]) -> None:
         "## Calibration (Jev)",
         "",
         f"- ECE (raw): {jev['ece']:.4f}" if jev["ece"] is not None else "- ECE (raw): n/a",
-        f"- ECE after isotonic recalibration ({N_TRAIN}-case train / {jev['recal']['test_n']}-case test): "
-        f"{jev['recal']['ece_before']:.4f} -> {jev['recal']['ece_after']:.4f}"
-        if jev["recal"]
-        else "- recalibration: n/a",
+        *_recal_lines(jev["recal"]),
         "",
         "## Cost & latency",
         "",
@@ -206,7 +236,14 @@ def write_results_md(summary: dict[str, Any]) -> None:
         f"{_usd(llm['cost_latency']['cost_per_1000_usd'])} |",
         "",
     ]
-    RESULTS_MD.write_text("\n".join(lines))
+    text = "\n".join(lines)
+    marker = "## Consistency (run-to-run)"
+    if RESULTS_MD.exists() and marker in RESULTS_MD.read_text():
+        rest = RESULTS_MD.read_text().split(marker, 1)[1]
+        end = rest.find("\n## ", 1)
+        section = marker + (rest[:end] if end != -1 else rest)
+        text = text.rstrip("\n") + "\n\n" + section.rstrip("\n") + "\n"
+    RESULTS_MD.write_text(text)
 
 
 def _pct(v: float | None) -> str:
@@ -247,12 +284,16 @@ def main() -> None:
         if judge_key == "jev" and len(cal_rows) >= N_TRAIN + 50:
             train_rows, test_rows = split_train_test(cal_rows, N_TRAIN, seed=RECAL_SEED)
             curve = learning_curve(train_rows, test_rows, sizes=LEARNING_CURVE_SIZES)
-            plot_learning_curve(curve, RESULTS_DIR / "recalibration_learning_curve.png")
+            repeated = repeated_split_summary(
+                cal_rows, n_train=N_TRAIN, n_splits=N_SPLITS, sizes=LEARNING_CURVE_SIZES
+            )
+            plot_learning_curve(repeated, RESULTS_DIR / "recalibration_learning_curve.png")
             recal_summary = {
                 "test_n": len(test_rows),
                 "ece_before": curve[-1]["ece_before"] if curve else None,
                 "ece_after": curve[-1]["ece_after"] if curve else None,
                 "learning_curve": curve,
+                "repeated": repeated,
             }
 
         summary[judge_key] = {

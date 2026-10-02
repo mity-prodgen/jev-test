@@ -96,3 +96,49 @@ def learning_curve(
             {"n_train": result.n_train, "ece_before": result.ece_before, "ece_after": result.ece_after}
         )
     return out
+
+
+def repeated_split_summary(
+    rows: list[dict[str, Any]],
+    n_train: int = 400,
+    n_splits: int = 300,
+    sizes: tuple[int, ...] = (50, 100, 200, 400),
+    seed0: int = 0,
+) -> list[dict[str, Any]]:
+    """Recalibrate over many random train/test splits, per training-set size.
+
+    One split gives one noisy ECE difference. Repeating the split shows whether
+    recalibration helps or hurts on average, and how much the result moves
+    between splits. Splits overlap (same rows), so treat the spread as a
+    guide, not as a formal confidence interval.
+    """
+    import statistics
+
+    before: dict[int, list[float]] = {n: [] for n in sizes}
+    after: dict[int, list[float]] = {n: [] for n in sizes}
+    for s in range(n_splits):
+        train, test = split_train_test(rows, n_train, seed=seed0 + s)
+        for n in sizes:
+            if n > len(train):
+                continue
+            r = recalibrate(train, test, n_train_subset=n)
+            before[n].append(r.ece_before)
+            after[n].append(r.ece_after)
+
+    out = []
+    for n in sizes:
+        if not before[n]:
+            continue
+        diffs = [a - b for a, b in zip(after[n], before[n])]
+        out.append(
+            {
+                "n_train": n,
+                "n_splits": len(diffs),
+                "mean_ece_before": statistics.mean(before[n]),
+                "mean_ece_after": statistics.mean(after[n]),
+                "mean_diff": statistics.mean(diffs),
+                "sd_diff": statistics.stdev(diffs) if len(diffs) > 1 else 0.0,
+                "frac_worse": sum(1 for d in diffs if d > 0) / len(diffs),
+            }
+        )
+    return out
