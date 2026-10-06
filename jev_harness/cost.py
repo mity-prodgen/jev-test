@@ -23,6 +23,11 @@ _ENCODING = tiktoken.get_encoding("cl100k_base")
 JEV_USD_PER_MTOK_INPUT = 0.042
 JEV_USD_PER_MTOK_OUTPUT = 0.0
 
+# Jev input tokens / tiktoken estimate, measured: 1.36 (post 2, JSON states), 1.05 (post 3 test 1, SQuAD prose),
+# about 1.6 (post 3 test 2, one SciFact document per request: biomedical text plus a fixed per-request overhead)
+# and about 1.1 for 20 documents in one request. Dry-run estimates are therefore good to roughly +/-30%.
+JEV_TOKEN_FACTOR = 1.36
+
 
 def estimate_tokens(text: str) -> int:
     return len(_ENCODING.encode(text))
@@ -50,9 +55,11 @@ class StepEstimate:
         ) / 1_000_000
 
 
-def jev_step_estimate(name: str, texts: list[str], est_output_tokens_per_call: int = 20) -> StepEstimate:
+def jev_step_estimate(
+    name: str, texts: list[str], est_output_tokens_per_call: int = 20, token_factor: float = 1.0
+) -> StepEstimate:
     """texts: the full rendered state+instructions text for each planned call."""
-    input_tokens = sum(estimate_tokens(t) for t in texts)
+    input_tokens = round(sum(estimate_tokens(t) for t in texts) * token_factor)
     return StepEstimate(
         name=name,
         n_calls=len(texts),

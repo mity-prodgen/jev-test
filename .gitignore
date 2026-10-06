@@ -7,3 +7,4 @@ data/
 cache/
 hallucination/results/
 .DS_Store
+rag/results/
