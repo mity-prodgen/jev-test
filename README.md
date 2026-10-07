@@ -2,11 +2,13 @@
 
 A test harness for [TypeSafe's Jev](https://docs.typesafe.ai/introduction), a "System One" model: you send
 it a `state` plus typed `questions` (Choice / Score / Noul) and get back typed answers with confidence
-scores instead of generated text. Two posts' worth of tests live here:
+scores instead of generated text. Three posts' worth of tests live here:
 
 1. **Confidence audit** — does Jev's own confidence score mean anything? (`testcases/`, below)
 2. **Hallucination judge** — pointed at *someone else's* output, can Jev tell whether a claim is supported
    by a source passage, and how does it compare to an LLM judge? (`hallucination/`, further down)
+3. **Jev for RAG** — three questions about using Jev for retrieval: do you need to tune chunking, does Jev add
+   precision as a reranker, and can a chunk's text change its own rank (injection). (`rag/`, below)
 
 Both share the same base harness: `jev_harness/client.py` wraps `typesafe-sdk` and always logs the raw
 HTTP response, so nothing here depends on how any particular SDK version parses a result.
@@ -18,7 +20,7 @@ Post 1 background and results: [Stress-Testing Jev's Confidence](https://claude.
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-cp .env.example .env   # fill in TYPESAFE_API_KEY, and ANTHROPIC_API_KEY if you'll run the hallucination judge
+cp .env.example .env   # fill in TYPESAFE_API_KEY, and ANTHROPIC_API_KEY for the LLM judge (post 2) and hard-negative drafting (post 3)
 ```
 
 ## Post 1: confidence audit
@@ -127,9 +129,66 @@ is implemented (see `jev_harness/llm_judge.py` to add another). Anthropic auth c
 Federation](https://platform.claude.com/docs/en/manage-claude/authentication) - the client code doesn't
 change either way, since `anthropic.Anthropic()` resolves credentials from the environment automatically.
 
+## Post 3: Jev for RAG
+
+Background and results: [Does Jev Work for RAG?](https://claude.ai/artifact/9b515612-44da-48d1-97e8-842a48eb102a).
+
+Tests three questions about Jev in retrieval, all against a pinned `jev-1.13.0`. Every script is a **dry-run unless you
+pass `--live`**, caches every Jev response in `cache/` (reruns cost nothing), and uses fixed seeds. Results are regenerated
+into [rag/RESULTS.md](rag/RESULTS.md) by each `--analyze`; charts go to `rag/results/` (gitignored).
+
+```bash
+scripts/download_rag_data.sh                       # SQuAD v1.1 dev + BEIR SciFact into data/ (gitignored)
+set -a && source .env && set +a
+
+# Test 1 - context rot: 50 SQuAD questions, documents of 500 / 2K / 8K / 30K tokens, answer at start / middle / end
+.venv/bin/python rag/test1_context_rot.py                # dry-run (builds the documents, prices the calls)
+.venv/bin/python rag/test1_context_rot.py --live         # 4 calibration calls, then 800 calls
+.venv/bin/python rag/test1_context_rot.py --analyze      # AUC per length and position, charts, RESULTS.md
+
+# Test 2 - reranker bake-off on SciFact: embeddings vs Jev Noul vs Jev Score vs a local cross-encoder
+.venv/bin/python rag/test2_rerank.py --local             # first stage (Qwen3-Embedding-0.6B) + bge-reranker-v2-m3, local
+.venv/bin/python rag/test2_rerank.py                     # dry-run;  add --batched for the 20-documents-per-request variant
+.venv/bin/python rag/test2_rerank.py --live --batched
+.venv/bin/python rag/test2_rerank.py --analyze           # nDCG/MRR/Recall, ties, overlap buckets, cost and latency
+
+# Test 2b - hard negatives (Claude drafts, YOU review, then Jev runs)
+.venv/bin/python rag/hard_negatives.py draft --live      # writes rag/results/hard_negatives_review.csv, then stops
+#   edit the CSV: set status to approved / rejected for every row
+.venv/bin/python rag/hard_negatives.py run --live        # only approved rows reach Jev
+
+# Test 3 - injection: planted chunks in top-20 lists, controls, and the two guard questions
+.venv/bin/python rag/test3_injection.py --local && .venv/bin/python rag/test3_injection.py --live
+.venv/bin/python rag/test3_injection.py --analyze
+.venv/bin/python rag/test3b_heldout_guard.py --local && .venv/bin/python rag/test3b_heldout_guard.py --live
+```
+
+```
+jev_harness/
+  metrics.py     nDCG, MRR, Recall, AUC, seeded bootstrap intervals (also paired differences)
+  pairs.py       cached, threaded Jev requests (run_requests) used by every rag/ script
+rag/
+  common.py             pinned model, seeds, the Jev question wording (relevance Noul and Score, injection, guard)
+  test1_context_rot.py, test2_rerank.py, hard_negatives.py, test3_injection.py, test3b_heldout_guard.py
+  RESULTS.md            headline numbers (regenerated, not hand-edited)
+```
+
+Notes:
+- **Datasets:** SQuAD v1.1 is CC BY-SA 4.0. SciFact is packaged by BEIR as CC BY-SA 4.0, but the original
+  [allenai/scifact](https://huggingface.co/datasets/allenai/scifact) card says CC BY-NC 2.0, so treat it as non-commercial.
+  Nothing from either dataset is committed; `data/` and `rag/results/` are gitignored.
+- **Models run locally:** `Qwen/Qwen3-Embedding-0.6B` (Apache 2.0) and `BAAI/bge-reranker-v2-m3` (Apache 2.0), on the Apple GPU (`mps`)
+  when available. First use downloads them from Hugging Face.
+- **Hard negatives** are written by Claude (`claude-sonnet-5-5`) from the claims, so they track the claim's wording. That favours any
+  non-embedding judge; read the Test 2b numbers with that in mind.
+- **The guard question** was written after seeing the Test 3 attack strings, so Test 3 numbers for it are in-sample.
+  `test3b_heldout_guard.py` tests it on paraphrases written afterwards.
+- **Dry-run estimates** use a tiktoken proxy with a measured factor (see `jev_harness/cost.py`); real Jev token counts vary
+  by content, so expect roughly +/-30%.
+
 ## Notes
 
 - Every run pins a model version (`--model jev-1.13.0` / `jev-1.13.0` in `hallucination/run_judge_batch.py`)
   rather than the `jev-latest` alias, for reproducibility.
-- `results/`, `data/`, `cache/`, `hallucination/results/`, and `.env` are all gitignored - nothing tracked
+- `results/`, `data/`, `cache/`, `hallucination/results/`, `rag/results/`, and `.env` are all gitignored - nothing tracked
   in this repo requires secrets to read.
