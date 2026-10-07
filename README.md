@@ -7,8 +7,8 @@ scores instead of generated text. Three posts' worth of tests live here:
 1. **Confidence audit** — does Jev's own confidence score mean anything? (`testcases/`, below)
 2. **Hallucination judge** — pointed at *someone else's* output, can Jev tell whether a claim is supported
    by a source passage, and how does it compare to an LLM judge? (`hallucination/`, further down)
-3. **RAG claims** — three claims TypeSafe's engineers make about using Jev for retrieval: no chunking to tune,
-   precision from Jev as a reranker, and "the agent never touches the ranking". (`rag/`, below)
+3. **Jev for RAG** — three questions about using Jev for retrieval: do you need to tune chunking, does Jev add
+   precision as a reranker, and can a chunk's text change its own rank (injection). (`rag/`, below)
 
 Both share the same base harness: `jev_harness/client.py` wraps `typesafe-sdk` and always logs the raw
 HTTP response, so nothing here depends on how any particular SDK version parses a result.
@@ -129,9 +129,11 @@ is implemented (see `jev_harness/llm_judge.py` to add another). Anthropic auth c
 Federation](https://platform.claude.com/docs/en/manage-claude/authentication) - the client code doesn't
 change either way, since `anthropic.Anthropic()` resolves credentials from the environment automatically.
 
-## Post 3: RAG claims
+## Post 3: Jev for RAG
 
-Tests three claims about Jev in retrieval, all against a pinned `jev-1.13.0`. Every script is a **dry-run unless you
+Background and results: [Does Jev Work for RAG?](https://claude.ai/artifact/9b515612-44da-48d1-97e8-842a48eb102a).
+
+Tests three questions about Jev in retrieval, all against a pinned `jev-1.13.0`. Every script is a **dry-run unless you
 pass `--live`**, caches every Jev response in `cache/` (reruns cost nothing), and uses fixed seeds. Results are regenerated
 into [rag/RESULTS.md](rag/RESULTS.md) by each `--analyze`; charts go to `rag/results/` (gitignored).
 
